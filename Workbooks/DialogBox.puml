@@ -1,0 +1,124 @@
+@startuml
+
+enum ControlType << (E,yellowgreen) >> {
+  DefaultOkButton = 1
+  ...
+  HelpButton = 24
+}
+
+interface ITriggerControl {
+  +bool **IsTrigger**
+}
+
+abstract Control {
+  #ControlType <color:blue>**type**
+  +string <color:blue>**Id**
+  +int? **Left**
+  +int? **Top**
+  +int? **Width**
+  +int? **Height**
+  #**Control**(ControlType ct, string id)
+  ~void <color:darkred>**BuildDef**</color>(int row, ref object[,] def)
+}
+
+abstract DimmableControl {
+  +bool Enabled
+}
+Control <|-- DimmableControl
+
+abstract TextControl {
+  +string Text
+  ~void <color:darkred>**BuildDef**</color>(int row, ref object[,] def)
+}
+DimmableControl <|-- TextControl
+
+TextControl <|-- StaticText
+TextControl <|-- GroupBox
+
+TextControl <|-- ButtonBase
+ButtonBase <|-- OkButtonDef
+ButtonBase <|-- CancelButton
+ButtonBase <|-- OkButton
+ButtonBase <|-- CancelButtonDef
+
+class OptionButton {
+}
+TextControl <|-- OptionButton
+ITriggerControl <|-- OptionButton
+
+abstract ValueControl {
+  ~object State
+  ~void <color:darkred>**BuildDef**</color>(int row, ref object[,] def)
+}
+DimmableControl <|-- ValueControl
+
+class StringEditBox {
+  +string Value
+}
+ValueControl <|-- StringEditBox
+
+StringEditBox <|-- TextEditBox
+StringEditBox <|-- FormulaEditBox
+StringEditBox <|-- RefEditBox
+
+class IntegerEditBox {
+  +int Value
+}
+ValueControl <|-- IntegerEditBox
+
+class NumberEditBox {
+  +double Value
+}
+ValueControl <|-- NumberEditBox
+
+class CheckBox {
+  +string Text
+  +bool? Value
+  ~void <color:darkred>**BuildDef**</color>(int row, ref object[,] def)
+}
+ValueControl <|-- CheckBox
+ITriggerControl <|-- CheckBox
+
+class OptionGroup {
+  +int? SelectedIndex
+  +OptionButton SelectedItem
+  +string SelectedId
+  +string Text
+  ~void <color:darkred>**BuildDef**</color>(int row, ref object[,] def)
+}
+ValueControl <|-- OptionGroup
+ITriggerControl <|-- OptionGroup
+
+abstract ListControl {
+  +List<object> Items
+  +int? SelectedIndex
+  +object SelectedItem
+  +string Formula
+  ~void <color:darkred>**BuildDef**</color>(int row, ref object[,] def)
+}
+ValueControl <|-- ListControl
+ITriggerControl <|-- ListControl
+
+ListControl <|-- ListBox
+ListControl <|-- LinkedListBox
+ListControl <|-- DropDown
+ListControl <|-- LinkedDropDown
+
+class Icon {
+  +Style IconStyle
+  ~void <color:darkred>**BuildDef**</color>(int row, ref object[,] def)
+}
+Control <|-- Icon
+
+class Dialog {
+  ~void <color:darkred>**BuildDef**</color>(int row, ref object[,] def)
+}
+Control <|-- Dialog
+
+DimmableControl <|-- FileListBox
+ITriggerControl <|-- FileListBox
+DimmableControl <|-- DriveListBox
+ITriggerControl <|-- DriveListBox
+DimmableControl <|-- DirectoryBox
+
+@enduml
